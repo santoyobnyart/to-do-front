@@ -1,7 +1,8 @@
-// 1. Importamos la instancia de Axios, los tipos y las funciones de la DB corregidas.
+// 1. Importamos la instancia de Axios, las funciones de la DB y el TIPO de Task.
 import axiosInstance from '../../api/axiosInstance';
 import { getTasks, saveTask, deleteTask } from '../../utils/localDB';
-import { Task } from '../../types';
+// 2. Añadimos 'type' a la importación para cumplir con las reglas de TypeScript.
+import type { Task } from '../../types';
 
 export const syncTasksWithServer = async () => {
     const tasks = await getTasks();
@@ -16,7 +17,7 @@ export const syncTasksWithServer = async () => {
 
     for (const taskToSync of unsyncedTasks) {
         try {
-            // 2. Usamos axiosInstance. La URL base y el token se añaden automáticamente.
+            // Usamos axiosInstance. La URL base y el token se añaden automáticamente.
             const response = await axiosInstance.post('/tasks', {
                 title: taskToSync.title,
                 description: taskToSync.description,
@@ -26,7 +27,7 @@ export const syncTasksWithServer = async () => {
             // La tarea que vuelve del servidor ya tiene el ID permanente.
             const syncedTaskFromServer: Task = response.data;
 
-            // 3. Lógica para evitar duplicados:
+            // Lógica para evitar duplicados:
             // Primero, eliminamos la tarea con el ID temporal de IndexedDB.
             await deleteTask(taskToSync.id);
 
